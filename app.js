@@ -1,151 +1,160 @@
 // Your OpenWeatherMap API Key
 const API_KEY = '12d39d49a51df2ed6ca801cfa950510c';  // Replace with your actual API key
-const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
+function WeatherApp() {
 
-// Function to fetch weather data
-function getWeather(city) {
-    // Build the complete URL
-    const url = `${API_URL}?q=${city}&appid=${API_KEY}&units=metric`;
-    
-    // Make API call using Axios
-    axios.get(url)
-        .then(function(response) {
-            // Success! We got the data
-            console.log('Weather Data:', response.data);
-            displayWeather(response.data);
-        })
-        .catch(function(error) {
-            // Something went wrong
-            console.error('Error fetching weather:', error);
-            document.getElementById('weather-display').innerHTML = 
-                '<p class="loading">Could not fetch weather data. Please try again.</p>';
-        });
+  this.apiKey = "12d39d49a51df2ed6ca801cfa950510c";
+
+  this.cityInput = document.getElementById("city-input");
+  this.searchBtn = document.getElementById("search-btn");
+  this.weatherDisplay = document.getElementById("weather-display");
+  this.forecastContainer = document.getElementById("forecast-container");
 }
 
-// Function to display weather data
-function displayWeather(data) {
-    // Extract the data we need
-    const cityName = data.name;
-    const temperature = Math.round(data.main.temp);
-    const description = data.weather[0].description;
-    const icon = data.weather[0].icon;
-    const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
-    
-    // Create HTML to display
-    const weatherHTML = `
-        <div class="weather-info">
-            <h2 class="city-name">${cityName}</h2>
-            <img src="${iconUrl}" alt="${description}" class="weather-icon">
-            <div class="temperature">${temperature}°C</div>
-            <p class="description">${description}</p>
-        </div>
-    `;
-    
-    // Put it on the page
-    document.getElementById('weather-display').innerHTML = weatherHTML;
-}
+/* ---------------- Init ---------------- */
 
-// Call the function when page loads
-getWeather('London');
-const apiKey = "YOUR_API_KEY";   // keep your same key
-const weatherDisplay = document.getElementById("weather-display");
-const cityInput = document.getElementById("city-input");
-const searchBtn = document.getElementById("search-btn");
+WeatherApp.prototype.init = function () {
 
-/* -------------------------------
-   Show Loading
---------------------------------*/
-function showLoading() {
-  weatherDisplay.innerHTML = `
-    <div class="loading-container">
-      <div class="spinner"></div>
-      <p>Loading weather...</p>
-    </div>
-  `;
-}
+  this.searchBtn.addEventListener(
+    "click",
+    this.handleSearch.bind(this)
+  );
 
-/* -------------------------------
-   Show Error
---------------------------------*/
-function showError(message) {
-  weatherDisplay.innerHTML = `
-    <div class="error-message">
-      ${message}
-    </div>
-  `;
-}
-
-/* -------------------------------
-   Display Weather (simple example)
---------------------------------*/
-function displayWeather(data) {
-  weatherDisplay.innerHTML = `
-    <h2>📍 ${data.name}, ${data.sys.country}</h2>
-    <p>🌡 Temperature: ${data.main.temp} °C</p>
-    <p>🌥 Condition: ${data.weather[0].description}</p>
-    <p>💨 Wind: ${data.wind.speed} m/s</p>
-  `;
-}
-
-/* -------------------------------
-   Get Weather (Async / Await)
---------------------------------*/
-async function getWeather(city) {
-
-  try {
-    showLoading();
-    searchBtn.disabled = true;
-
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
-    const response = await axios.get(url);
-
-    displayWeather(response.data);
-
-  } catch (error) {
-
-    if (error.response && error.response.status === 404) {
-      showError("❌ City not found. Please try another city.");
-    } else {
-      showError("⚠️ Something went wrong. Please try again later.");
+  this.cityInput.addEventListener(
+    "keydown",
+    (e) => {
+      if (e.key === "Enter") this.handleSearch();
     }
+  );
 
-  } finally {
-    searchBtn.disabled = false;
-  }
-}
+  this.showWelcome();
+};
 
-/* -------------------------------
-   Search Button Click
---------------------------------*/
-searchBtn.addEventListener("click", () => {
+/* ---------------- Welcome ---------------- */
 
-  const city = cityInput.value.trim();
+WeatherApp.prototype.showWelcome = function () {
+  this.weatherDisplay.innerHTML =
+    "<p>🌍 Search for a city to see weather and 5-day forecast</p>";
+  this.forecastContainer.innerHTML = "";
+};
 
-  if (city === "") {
-    showError("Please enter a city name.");
-    cityInput.focus();
+/* ---------------- Search ---------------- */
+
+WeatherApp.prototype.handleSearch = function () {
+
+  const city = this.cityInput.value.trim();
+
+  if (!city) {
+    this.showError("Please enter a city name");
     return;
   }
 
-  getWeather(city);
-  cityInput.value = "";
-});
+  this.getWeather(city);
+  this.cityInput.value = "";
+};
 
-/* -------------------------------
-   Enter Key Support
---------------------------------*/
-cityInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    searchBtn.click();
+/* ---------------- Loading ---------------- */
+
+WeatherApp.prototype.showLoading = function () {
+  this.weatherDisplay.innerHTML =
+    "<p class='loading'>Loading...</p>";
+  this.forecastContainer.innerHTML = "";
+};
+
+/* ---------------- Error ---------------- */
+
+WeatherApp.prototype.showError = function (msg) {
+  this.weatherDisplay.innerHTML =
+    `<div class="error-message">${msg}</div>`;
+  this.forecastContainer.innerHTML = "";
+};
+
+/* ---------------- Main fetch ---------------- */
+
+WeatherApp.prototype.getWeather = async function (city) {
+
+  try {
+
+    this.showLoading();
+
+    const currentURL =
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.apiKey}&units=metric`;
+
+    const forecastURL =
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${this.apiKey}&units=metric`;
+
+    const [currentRes, forecastRes] =
+      await Promise.all([
+        axios.get(currentURL),
+        axios.get(forecastURL)
+      ]);
+
+    this.displayWeather(currentRes.data);
+
+    const days =
+      this.processForecastData(forecastRes.data.list);
+
+    this.displayForecast(days);
+
+  } catch (err) {
+
+    if (err.response && err.response.status === 404) {
+      this.showError("City not found");
+    } else {
+      this.showError("Something went wrong");
+    }
+
   }
-});
+};
 
-/* -------------------------------
-   Initial Page Message
---------------------------------*/
-weatherDisplay.innerHTML = `
-  <p style="text-align:center;">
-    🌍 Search for a city to view its weather.
-  </p>
-`;
+/* ---------------- Current weather ---------------- */
+
+WeatherApp.prototype.displayWeather = function (data) {
+
+  this.weatherDisplay.innerHTML = `
+    <h2>📍 ${data.name}, ${data.sys.country}</h2>
+    <p>🌡 ${data.main.temp} °C</p>
+    <p>${data.weather[0].description}</p>
+  `;
+};
+
+/* ---------------- Forecast API helper ---------------- */
+
+WeatherApp.prototype.processForecastData = function (list) {
+
+  const filtered = list.filter(item =>
+    item.dt_txt.includes("12:00:00")
+  );
+
+  return filtered.slice(0, 5);
+};
+
+/* ---------------- Forecast UI ---------------- */
+
+WeatherApp.prototype.displayForecast = function (days) {
+
+  this.forecastContainer.innerHTML = "";
+
+  days.forEach(d => {
+
+    const date = new Date(d.dt_txt);
+    const dayName =
+      date.toLocaleDateString("en-US", { weekday: "short" });
+
+    const icon =
+      `https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png`;
+
+    this.forecastContainer.innerHTML += `
+      <div class="forecast-card">
+        <div class="forecast-day">${dayName}</div>
+        <img src="${icon}" alt="">
+        <div>${Math.round(d.main.temp)} °C</div>
+        <small>${d.weather[0].description}</small>
+      </div>
+    `;
+  });
+};
+
+/* ---------------- Start app ---------------- */
+
+const app = new WeatherApp();
+app.init();
