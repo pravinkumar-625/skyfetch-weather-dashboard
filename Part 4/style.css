@@ -1,0 +1,143 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+  min-height: 100vh;
+  background: linear-gradient(135deg,#74ebd5,#acb6e5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container{
+  width: 90%;
+  max-width: 900px;
+  background: #ffffff;
+  padding: 20px 25px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+h2{
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Search */
+
+.search-box{
+  display: flex;
+  gap: 8px;
+}
+
+#city-input{
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+#search-btn{
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #4f46e5;
+  color: white;
+  cursor: pointer;
+}
+
+/* Quick cities */
+
+.quick-cities{
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.city-btn{
+  padding: 6px 12px;
+  border-radius: 18px;
+  border: none;
+  background: #dbeafe;
+  color: #1e40af;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.city-btn:hover{
+  background: #bfdbfe;
+}
+
+/* Recent searches */
+
+.recent-search-wrapper{
+  margin-top: 15px;
+}
+
+#recent-searches{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#recent-searches button{
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: none;
+  background: #e0e7ff;
+  color: #1e3a8a;
+  cursor: pointer;
+}
+
+#clear-history{
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
+}
+
+/* Current weather */
+
+#weather{
+  margin-top: 20px;
+  text-align: center;
+}
+
+#weather img{
+  width: 70px;
+}
+
+/* Forecast */
+
+#forecast{
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
+  gap: 10px;
+}
+
+.card{
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.card img{
+  width: 45px;
+}
+
+@media(max-width:600px){
+  .search-box{
+    flex-direction: column;
+  }
+}
