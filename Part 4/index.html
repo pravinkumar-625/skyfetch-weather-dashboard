@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkyFetch Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <h2>SkyFetch Weather Dashboard</h2>
+
+  <!-- Search -->
+  <div class="search-box">
+    <input type="text" id="city-input" placeholder="Enter city name">
+    <button id="search-btn">Search</button>
+  </div>
+
+  <!-- Quick City Buttons -->
+  <div class="quick-cities">
+    <button class="city-btn">Bengaluru</button>
+    <button class="city-btn">Delhi</button>
+    <button class="city-btn">Mumbai</button>
+    <button class="city-btn">Chennai</button>
+    <button class="city-btn">London</button>
+  </div>
+
+  <!-- Recent Searches -->
+  <div class="recent-search-wrapper">
+    <h4>Recent Searches</h4>
+    <div id="recent-searches"></div>
+    <button id="clear-history">Clear history</button>
+  </div>
+
+  <!-- Weather -->
+  <div id="weather"></div>
+
+  <!-- Forecast -->
+  <div id="forecast"></div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
